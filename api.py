@@ -1,5 +1,6 @@
 import threading
 from contextlib import asynccontextmanager
+from datetime import datetime
 
 from fastapi import FastAPI, Header, HTTPException
 from psycopg_pool import ConnectionPool
@@ -22,24 +23,30 @@ async def lifespan(app):
 app = FastAPI(lifespan=lifespan)
 
 @app.get("/readings")
-def list_readings():
+def list_readings(
+    start_time: datetime | None = None,
+    end_time: datetime | None = None,
+):
     with pool.connection() as conn:
-        rows = normal_user_data_read(conn)
+        rows = normal_user_data_read(conn, start_time, end_time)
     return [
-        {"time": time.isoformat(), "value": value, "tags": tags}
-        for time, value, tags in rows
+        {"time": t.isoformat(), "value": v, "tags": tags}
+        for t, v, tags in rows
     ]
 
 @app.get("/admin/readings")
-def list_all_readings():
+def list_all_readings(
+    start_time: datetime | None = None,
+    end_time: datetime | None = None,
+):
     with pool.connection() as conn:
-        rows = admin_user_data_read(conn)
+        rows = admin_user_data_read(conn, start_time, end_time)
     return [
         {
-            "time": time.isoformat(),
-            "value": value,
+            "time": t.isoformat(),
+            "value": v,
             "tags": tags,
-            "discard_reasons": discard_reasons(time, tags),
+            "discard_reasons": discard_reasons(t, tags),
         }
-        for time, value, tags in rows
+        for t, v, tags in rows
     ]
