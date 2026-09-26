@@ -7,6 +7,6 @@ def discard_reasons(time, tags):
     reasons = []
     if time <= datetime.now(timezone.utc) - MAX_AGE:
         reasons.append("too old")
-    for tag in set(tags) & DISCARD_TAGS:
+    for tag in sorted(set(tags) & DISCARD_TAGS):
         reasons.append(f"tagged {tag}")
     return reasons

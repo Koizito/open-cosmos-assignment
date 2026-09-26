@@ -1,0 +1,7 @@
+psycopg
+psycopg_pool
+fastapi
+uvicorn[standard]
+pytest
+httpx2
+requests

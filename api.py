@@ -8,8 +8,9 @@ from psycopg_pool import ConnectionPool
 import poller
 from db import DATABASE_URL, admin_user_data_read, normal_user_data_read
 from utils import discard_reasons
+from config import ADMIN_TOKEN
 
-pool = ConnectionPool(DATABASE_URL, min_size=1, max_size=10)
+pool = ConnectionPool(DATABASE_URL, min_size=1, max_size=10, open=True)
 
 @asynccontextmanager
 async def lifespan(app):
@@ -36,9 +37,12 @@ def list_readings(
 
 @app.get("/admin/readings")
 def list_all_readings(
+    x_admin_token: str = Header(...),
     start_time: datetime | None = None,
     end_time: datetime | None = None,
 ):
+    if x_admin_token != ADMIN_TOKEN:
+        raise HTTPException(status_code=401, detail="invalid admin token")
     with pool.connection() as conn:
         rows = admin_user_data_read(conn, start_time, end_time)
     return [
