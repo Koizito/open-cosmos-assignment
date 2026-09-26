@@ -10,6 +10,16 @@ if [[ ! -x "$MOCK_SERVER" ]]; then
     exit 1
 fi
 
+if lsof -i :8000 >/dev/null 2>&1; then
+    echo "Port 8000 already in use" >&2
+    exit 1
+fi
+
+if lsof -i :$MOCK_PORT >/dev/null 2>&1; then
+    echo "Port $MOCK_PORT already in use" >&2
+    exit 1
+fi
+
 echo "Starting Postgres..."
 docker compose up -d db
 

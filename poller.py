@@ -1,4 +1,3 @@
-import time
 import struct
 from datetime import datetime, timezone
 
