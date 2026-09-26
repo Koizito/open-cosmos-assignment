@@ -18,7 +18,7 @@ def conn():
 
 @pytest.fixture
 def client():
-    return TestClient(api.app)
+    return TestClient(api.app, headers={"X-Admin-Token": "secret"})
 
 
 @pytest.fixture

@@ -53,3 +53,9 @@ def test_admin_and_normal_user_disagree(insert, client):
     insert(now(), 0.6, ["system"])
     assert len(client.get("/readings").json()) == 1
     assert len(client.get("/admin/readings").json()) == 2
+
+def test_admin_endpoint_rejects_missing_token(insert):
+    from fastapi.testclient import TestClient
+    import api
+    c = TestClient(api.app)
+    assert c.get("/admin/readings").status_code == 422
