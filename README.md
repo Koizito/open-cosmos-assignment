@@ -32,7 +32,8 @@ This script will:
 2. Wait for the database to accept connections.
 3. Apply `schema.sql` (creates the `readings` table).
 4. Start the mock data server on port `28462`.
-5. Start the API on port `8000`.
+5. Start the poller (a background process that writes to the database).
+6. Start the API on port `8000`.
 
 Press `Ctrl+C` to stop the mock server and the API. The PostgreSQL container keeps running; stop it with `docker compose down`.
 

@@ -35,12 +35,16 @@ echo "Starting mock server on port $MOCK_PORT..."
 "$MOCK_SERVER" --port "$MOCK_PORT" &
 MOCK_PID=$!
 
+echo "Starting poller..."
+python poller.py &
+POLLER_PID=$!
+
 echo "Starting API..."
 uvicorn api:app &
 API_PID=$!
 
 cleanup() {
-    kill "$MOCK_PID" "$API_PID" 2>/dev/null || true
+    kill "$MOCK_PID" "$POLLER_PID" "$API_PID" 2>/dev/null || true
     wait 2>/dev/null || true
 }
 trap cleanup EXIT INT TERM

@@ -5,7 +5,7 @@ def insert_data_point(conn, reading):
     with conn.cursor() as cur:
         cur.execute(
             "INSERT INTO readings (time, value, tags) VALUES (%s, %s, %s) "
-            "ON CONFLICT (time, tags) DO NOTHING",
+            "ON CONFLICT (time) DO NOTHING",
             reading,
         )
     conn.commit()

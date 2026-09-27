@@ -1,4 +1,5 @@
 import struct
+import time
 from datetime import datetime, timezone
 
 import requests
@@ -12,10 +13,10 @@ def parse(item):
     timestamp = datetime.fromtimestamp(item["time"], tz=timezone.utc)
     return (timestamp, value, item["tags"])
 
-def run(stop_event):
+def run():
     conn = psycopg.connect(DATABASE_URL)
     try:
-        while not stop_event.is_set():
+        while True:
             try:
                 response = requests.get(POLLER_URL, timeout=5)
                 response.raise_for_status()
@@ -25,6 +26,12 @@ def run(stop_event):
             except psycopg.OperationalError:
                 conn.close()
                 conn = psycopg.connect(DATABASE_URL)
-            stop_event.wait(POLLER_INTERVAL)
+            time.sleep(POLLER_INTERVAL)
     finally:
         conn.close()
+
+if __name__ == "__main__":
+    try:
+        run()
+    except KeyboardInterrupt:
+        pass

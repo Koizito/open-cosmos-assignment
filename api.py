@@ -12,16 +12,7 @@ from config import ADMIN_TOKEN
 
 pool = ConnectionPool(DATABASE_URL, min_size=1, max_size=10, open=True)
 
-@asynccontextmanager
-async def lifespan(app):
-    stop_event = threading.Event()
-    thread = threading.Thread(target=poller.run, args=(stop_event,), daemon=True)
-    thread.start()
-    yield
-    stop_event.set()
-    thread.join(timeout=5)
-
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 @app.get("/readings")
 def list_readings(
