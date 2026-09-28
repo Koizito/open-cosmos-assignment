@@ -20,10 +20,10 @@ if lsof -i :$MOCK_PORT >/dev/null 2>&1; then
     exit 1
 fi
 
-echo "Starting Postgres..."
+echo "Starting PostgreSQL..."
 docker compose up -d db
 
-echo "Waiting for Postgres..."
+echo "Waiting for PostgreSQL..."
 until docker compose exec -T db pg_isready -U app -d app >/dev/null 2>&1; do
     sleep 1
 done
